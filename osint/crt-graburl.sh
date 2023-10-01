@@ -10,4 +10,4 @@ if [[ -z "$TARGET" ]]; then
 fi
 
 echo "Grabbing all CN's for $TARGET from crt.sh and writing to $OUTPUT_FILE"
-curl -s -H "Accept: application/json" "https://crt.sh/\?q=${TARGET}" | jq ".[] .common_name" | awk -F\" '{ print $2 }' | sort | uniq > $OUTPUT_FILE
+curl -s -H "Accept: application/json" "https://crt.sh/\?q=${TARGET}" | jq '.[] | "\(.name_value)\n\(.common_name)"' | sed 's/\"//g' | sed 's/\\n/\n/g' | grep -e ".*${TARGET}" | sort | uniq > $OUTPUT_FILE
